@@ -8,6 +8,7 @@ brew install yarn
 ```
 ### Setup Environment
 ```bash
+yarn
 yarn buildEnv
 yarn setup:server
 yarn setup:client
