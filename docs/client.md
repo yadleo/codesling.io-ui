@@ -7,7 +7,7 @@ yarn
 yarn build
 ```
 
-This will start the create-react-app script responsible for the weback-dev-server for rendering changes in the browser when making changes to the client side codebase.
+This will start webpack and create a bundle.js file. 
 
 ## Components
 
