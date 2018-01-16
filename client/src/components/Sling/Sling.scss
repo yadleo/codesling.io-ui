@@ -1,0 +1,63 @@
+@import '../../styles/vars';
+@import '../../styles/modules/colors';
+@import '../../styles/modules/mq';
+
+$stdoutGutter: 30px;
+
+.CodeMirror,
+.stdout {
+  font-family: $codeFont;
+}
+
+.sling-container {
+  display: grid;
+  height: 100%;
+  grid-template-areas:
+    "header"
+    "code1"
+    "stdout"
+    "code2";
+
+  @include mq('md') {
+    grid-template-columns:
+      33% 33% 33%;
+    grid-template-areas:
+      "header header header"
+      "code1   stdout   code2";
+  }
+}
+
+.code1-editor-container {
+  max-height: 100%;
+  background: palette('white');
+  overflow-y: scroll;
+  cursor: text;
+  grid-area: code1;
+}
+
+.code2-editor-container {
+  max-height: 100%;
+  background: palette('white');
+  overflow-y: scroll;
+  cursor: text;
+  grid-area: code2;
+}
+
+.stdout-container {
+  grid-area: stdout;
+}
+
+.editor-header {
+  grid-area: header;
+}
+
+.run-btn {
+  margin: $stdoutGutter;
+}
+
+.stdout {
+  min-height: 100px;
+  background: palette('darkgray', -7);
+  padding: 5px;
+  margin: 0 $stdoutGutter;
+}
