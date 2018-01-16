@@ -56,4 +56,8 @@ typings/
 
 # dotenv environment variables file
 .env
+.svg
+bundle.js
+bundle.js.map
 
+graveyard.js
