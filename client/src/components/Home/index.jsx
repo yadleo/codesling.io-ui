@@ -55,6 +55,7 @@ class Home extends Component {
           {this.state.allChallenges.map(challenge => {
             return (
             <option
+              key={challenge.id}
               value={JSON.stringify(challenge)}
             >
               {challenge.title}
