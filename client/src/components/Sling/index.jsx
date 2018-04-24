@@ -11,17 +11,17 @@ class SlingIndex extends Component {
   componentWillMount() {
     this.socket = io('http://localhost:4155', {
       query: {
-        roomId: this.props.location.pathname.slice(1)
+        roomId: this.props.location.pathname.slice(1),
+        player: this.props.location.state ? 1 : 2
       }
     });
-
     this.setState({ socket: this.socket });
   }
 
   render() {
     if (this.props.location.state) {
       return (
-        <Sling socket={this.state.socket} challenge={this.props.location.state.challenge}/>
+        <Sling socket={this.state.socket} player={this.socket.query.player} challenge={this.props.location.state.challenge}/>
       );
     } else {
       return (
