@@ -13,7 +13,8 @@ export default class Signup extends Component {
     this.state = {
       email: '',
       password: '',
-      username: ''
+      username: '',
+      error: false,
     }
   }
 
@@ -27,9 +28,14 @@ export default class Signup extends Component {
     }
     try {
       const data = await axios.post(`http://localhost:3396/api/auth/signup`, body);
+      console.log(data);
       data ? this.props.history.push('/login') : this.props.history.push('/auth');
     } catch (err) {
-      throw new Error(err);
+      this.setState({
+        error: true,
+      })
+      // throw new Error(err);
+
     }
   }
 
@@ -60,6 +66,11 @@ export default class Signup extends Component {
             placeholder={'enter your password'}
             onChange={this.handleInputChange}
             />
+          {this.state.error ? 
+            (<div><h5>Invalid Email or Password</h5></div>)
+            :
+            (<div />)
+          }
           <Button
             backgroundColor="red"
             color="white"
