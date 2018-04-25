@@ -25,6 +25,7 @@ class Challenge extends Component {
         {this.props.location.state.challenges.map(challenge => {
           return (
             <div>
+              <li>Title: {challenge.title}</li>
               <li>content: {challenge.content} </li>
               <li>difficulty: {challenge.difficulty} </li>
             </div>

@@ -18,6 +18,7 @@ class AddChallenge extends Component {
     e.preventDefault();
     const { title, content, difficulty } = this.state;
     const id = localStorage.getItem('id');
+    // add testContent to body
     const body = {
       title,
       content,
@@ -51,6 +52,12 @@ class AddChallenge extends Component {
             name='content'
             type='content'
             placeholder={'enter content'}
+            onChange={this.handleChallengeInput}
+            />
+          <Input 
+            name='difficulty'
+            type='difficulty'
+            placeholder={'enter your difficulty'}
             onChange={this.handleChallengeInput}
             />
           <Input 
