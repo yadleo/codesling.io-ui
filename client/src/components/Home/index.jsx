@@ -16,7 +16,7 @@ class Home extends Component {
    }
 
    async componentDidMount() {
-    const { data } = await axios.get(`http://localhost:3396/api/challenges`)
+    const { data } = await axios.get(`http://localhost:3396/api/challenges`);
     this.setState({ allChallenges: data });
    }
 
@@ -44,6 +44,13 @@ class Home extends Component {
     this.setState({ selectedChallenge: value });
   }
 
+  handleChallengeDetailSelect = () => {
+    this.props.history.push({
+      pathname: '/challenge',
+      state: {challenges: this.state.allChallenges}
+    })
+  }
+
   render() {
     return (
       <div className="landing-page-container">
@@ -64,6 +71,13 @@ class Home extends Component {
           )}
         </select>
         <br />
+        <br />
+        <Button
+          backgroundColor="red"
+          color="white"
+          text="Challenge Details"
+          onClick={() => this.handleChallengeDetailSelect()}
+        />
         <br />
         <Button
           backgroundColor="red"
