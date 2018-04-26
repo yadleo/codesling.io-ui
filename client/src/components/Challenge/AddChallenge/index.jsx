@@ -19,7 +19,9 @@ class AddChallenge extends Component {
 
   submitChallenge = async (e) => {
     e.preventDefault();
-    
+    if (this.state.testcode.length === 0) {
+      return alert('Please add tests cases before submit');
+    }
     const { title, content, difficulty, testcode} = this.state;
     const id = localStorage.getItem('id');
     
