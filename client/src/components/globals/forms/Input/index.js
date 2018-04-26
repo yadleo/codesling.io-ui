@@ -7,11 +7,13 @@ const Input = ({
   name,
   onChange,
   placeholder,
+  value,
 }) => {
   return (
     <input
       type={type}
       name={name}
+      value={value}
       placeholder={placeholder}
       onChange={onChange}
     />

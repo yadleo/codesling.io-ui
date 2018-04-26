@@ -11,14 +11,18 @@ class AddChallenge extends Component {
   state = { 
     title: '',
     content: '',
-    difficulty: null
+    difficulty: null,
+    input: '',
+    output: '',
+    testcode: [],
    }
 
   submitChallenge = async (e) => {
     e.preventDefault();
-    const { title, content, difficulty } = this.state;
+    
+    const { title, content, difficulty, testcode} = this.state;
     const id = localStorage.getItem('id');
-    // add testContent to body
+    
     const body = {
       title,
       content,
@@ -26,10 +30,34 @@ class AddChallenge extends Component {
       user_id: id,
       type: 0
     }
+    
     const result = await axios.post('http://localhost:3396/api/challenges/addChallenge', body);
+    this.state.testcode.forEach( async (test) => {
+      let tests = {
+        testcode: JSON.stringify(test),
+        challenge_id: result.data[0].id
+      }
+      console.log('----', tests);
+      await axios.post('http://localhost:3396/api/testCases/', tests);
+    })
     this.props.history.push('/home');
   }
 
+  addNewTestCase = (e) => {
+    e.preventDefault();
+    let tempTestCode = this.state.testcode;
+    const { input, output } = this.state;
+    tempTestCode.push({
+      input,
+      output
+    })
+    console.log(tempTestCode)
+    this.setState({ 
+      testcode: tempTestCode,
+      input: '',
+      output: '',
+    })
+  }
   handleChallengeInput = (event) => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
@@ -48,24 +76,49 @@ class AddChallenge extends Component {
             placeholder={'enter title'}
             onChange={this.handleChallengeInput}
             />
+          <br/>
+          <br/>
           <Input
             name='content'
             type='content'
             placeholder={'enter content'}
             onChange={this.handleChallengeInput}
             />
+          <br/>
+          <br/>
           <Input 
             name='difficulty'
             type='difficulty'
             placeholder={'enter your difficulty'}
             onChange={this.handleChallengeInput}
             />
-          <Input 
-            name='difficulty'
-            type='difficulty'
-            placeholder={'enter your difficulty'}
-            onChange={this.handleChallengeInput}
+          <br />
+          <br />
+          <label>
+            Test Case(s):
+            <Input
+              name='input' 
+              type='text' 
+              placeholder='input'
+              value={this.state.input}
+              onChange={this.handleChallengeInput}
+              />
+            <Input 
+              name='output' 
+              type='text' 
+              placeholder='expected output'
+              value={this.state.output}
+              onChange={this.handleChallengeInput}
+              />
+          </label>
+          <br/>
+          <Button 
+            backgroundColor='red'
+            color='white' 
+            text='Add Test Case'
+            onClick={(e) => this.addNewTestCase(e)}
             />
+          <br/>
           <Button
             backgroundColor="red"
             color="white"
