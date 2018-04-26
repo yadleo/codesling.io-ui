@@ -12,6 +12,7 @@ class AddChallenge extends Component {
     title: '',
     content: '',
     difficulty: null,
+    fn: '',
     input: '',
     output: '',
     testcode: [],
@@ -22,13 +23,14 @@ class AddChallenge extends Component {
     if (this.state.testcode.length === 0) {
       return alert('Please add tests cases before submit');
     }
-    const { title, content, difficulty, testcode} = this.state;
+    const { title, content, difficulty, fn, testcode} = this.state;
     const id = localStorage.getItem('id');
     
     const body = {
       title,
       content,
       difficulty,
+      fn,
       user_id: id,
       type: 0
     }
@@ -72,6 +74,9 @@ class AddChallenge extends Component {
           className="landing-page-logo"
         />
         <form className="auth-form">
+          <label>Challenge Details:</label>
+          <br/>
+          <br/>
           <Input
             name='title'
             type='title'
@@ -96,8 +101,15 @@ class AddChallenge extends Component {
             />
           <br />
           <br />
-          <label>
-            Test Case(s):
+          <Input 
+            name='fn'
+            type='fn'
+            placeholder={'enter function name'}
+            onChange={this.handleChallengeInput}
+            />
+          <br />
+          <br />
+          <label>Test Case(s):</label>
             <Input
               name='input' 
               type='text' 
@@ -112,7 +124,6 @@ class AddChallenge extends Component {
               value={this.state.output}
               onChange={this.handleChallengeInput}
               />
-          </label>
           <br/>
           <Button 
             backgroundColor='red'
