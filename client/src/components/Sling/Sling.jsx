@@ -5,8 +5,10 @@ import axios from 'axios';
 import { throttle } from 'lodash';
 
 import Stdout from './StdOut/index.jsx';
+import SubmittedCode from './StdOut/SubmittedCode.jsx';
 import EditorHeader from './EditorHeader';
 import Button from '../globals/Button';
+import Loading from '../globals/Loading';
 
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/lib/codemirror.css';
@@ -20,7 +22,9 @@ class Sling extends Component {
     challengerText: null,
     text: '',
     challenge: '',
-    stdout: ''
+    stdout: '',
+    loading: false,
+    submitResult: undefined,
   }
 
   componentDidMount() {
@@ -51,10 +55,34 @@ class Sling extends Component {
       this.props.player === player ? this.setState({ stdout }) : null;
     });
 
+    socket.on('server.submit', ({ pass, player, expected, got }) => {
+      // set winner or submit error
+      this.setState({
+        loading: false,
+        submitResult: (<SubmittedCode pass={pass} player={player} text={{ expected:expected , got:got }} />)
+      });
+    });
+
     window.addEventListener('resize', this.setEditorSize);
   }
 
   submitCode = () => {
+    if(!this.state.loading){
+      const { socket, player } = this.props;
+      const { ownerText, challengerText } = this.state;
+      this.setState({
+        loading: true,
+        submitResult: undefined
+      });
+      if (player === 1) {
+        socket.emit('client.submit', { text: ownerText, player });
+      } else {
+        socket.emit('client.submit', { text: challengerText, player });
+      }
+    }
+  }
+
+  runCode = () => {
     const { socket, player } = this.props;
     const { ownerText, challengerText } = this.state;
     if (player === 1) {
@@ -106,8 +134,18 @@ class Sling extends Component {
               text="Run Code"
               backgroundColor="red"
               color="white"
+              onClick={() => this.runCode()}
+            />
+            <Button
+              className="run-btn"
+              text="Submit Code"
+              backgroundColor="red"
+              color="white"
               onClick={() => this.submitCode()}
             />
+            {this.state.loading ? <Loading /> : null}
+            {this.state.submitResult ? this.state.submitResult : null}
+
           </div>
           <div className="code2-editor-container">
             <CodeMirror 
@@ -149,7 +187,7 @@ class Sling extends Component {
               text="Run Code"
               backgroundColor="red"
               color="white"
-              onClick={() => this.submitCode()}
+              onClick={() => this.runCode()}
             />
           </div>
           <div className="code2-editor-container">
