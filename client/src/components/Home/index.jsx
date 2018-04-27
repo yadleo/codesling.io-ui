@@ -38,6 +38,10 @@ class Home extends Component {
     this.props.history.push('/addChallenge');
   }
 
+  handleHistoryClick = () => {
+    this.props.history.push('/history');
+  }
+
   handleChallengeSelect = (e) => {
     e.preventDefault();
     const { value } = e.target;
@@ -91,6 +95,13 @@ class Home extends Component {
           color="white"
           text="Duel"
           onClick={() => this.handleDuelClick()}
+        />
+        <br />
+        <Button
+          backgroundColor="red"
+          color="white"
+          text="History"
+          onClick={() => this.handleHistoryClick()}
         />
       </div>
     );

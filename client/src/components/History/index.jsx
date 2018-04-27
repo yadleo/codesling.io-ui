@@ -17,6 +17,7 @@ class History extends Component {
   render() {
     return (
       <div>
+        <h1>History for {localStorage.getItem('username')}</h1>
         <HistoryList history={this.state.history}/>
       </div>
     );

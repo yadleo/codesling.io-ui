@@ -24,8 +24,10 @@ class Sling extends Component {
     challenge: '',
     stdout: '',
     loading: false,
+    blocked: false,
     submitResult: undefined,
   }
+
 
   componentDidMount() {
     const { socket, challenge, player } = this.props;
@@ -39,7 +41,7 @@ class Sling extends Component {
         id,
         ownerText: playerOneText,
         challengerText: playerTwoText,
-        challenge
+        challenge: challenge
       });
     });
 
@@ -56,18 +58,47 @@ class Sling extends Component {
     });
 
     socket.on('server.submit', ({ pass, player, expected, got }) => {
-      // set winner or submit error
-      this.setState({
-        loading: false,
-        submitResult: (<SubmittedCode pass={pass} player={player} text={{ expected:expected , got:got }} />)
-      });
+      if(!this.state.blocked){
+        if(player === this.props.player){
+          this.setState({
+            loading: false,
+            submitResult: (<SubmittedCode pass={pass} player={player} text={{ expected:expected , got:got }} />)
+          });
+        }
+
+        if(pass){
+          if(player !== this.props.player){
+            this.setState({
+              submitResult: (<SubmittedCode pass={pass} player={player} text={{ expected:expected , got:got }} />)
+            });
+          }
+          //block game
+          this.setState({
+            blocked: true
+          });
+          //History
+          let outcome = player === this.props.player ? 1 : 0;
+          let time = new Date();
+          let clout = 1;
+          let user_id = parseInt(localStorage.getItem('id'));
+          let challenger_id= 1;
+          let challenge_id = this.state.challenge.id;
+          console.log({ outcome , time , clout , user_id , challenger_id , challenge_id });
+
+          axios.post('http://localhost:3396/api/history/addHistory', { outcome , time , clout , user_id , challenger_id , challenge_id });
+
+          //update users
+          //requires update user endpoint for kdr and clout
+
+        }
+      }
     });
 
     window.addEventListener('resize', this.setEditorSize);
   }
 
   submitCode = () => {
-    if(!this.state.loading){
+    if(!this.state.loading && !this.state.blocked){
       const { socket, player } = this.props;
       const { ownerText, challengerText } = this.state;
       this.setState({
@@ -129,20 +160,22 @@ class Sling extends Component {
               <br/>
               {this.state.challenge.content || this.props.challenge.content}
             <Stdout text={this.state.stdout}/>
-            <Button
-              className="run-btn"
-              text="Run Code"
-              backgroundColor="red"
-              color="white"
-              onClick={() => this.runCode()}
-            />
-            <Button
-              className="run-btn"
-              text="Submit Code"
-              backgroundColor="red"
-              color="white"
-              onClick={() => this.submitCode()}
-            />
+            <div style={{'textAlign' : 'center'}} >
+              <Button
+                className="run-btn"
+                text="Run Code"
+                backgroundColor="red"
+                color="white"
+                onClick={() => this.runCode()}
+              />
+              <Button
+                className="run-btn"
+                text="Submit Code"
+                backgroundColor="red"
+                color="white"
+                onClick={() => this.submitCode()}
+              />
+            </div>
             {this.state.loading ? <Loading /> : null}
             {this.state.submitResult ? this.state.submitResult : null}
 
@@ -182,13 +215,24 @@ class Sling extends Component {
               <br/>
               {this.state.challenge.content || this.props.challenge.content}
             <Stdout text={this.state.stdout}/>
-            <Button
-              className="run-btn"
-              text="Run Code"
-              backgroundColor="red"
-              color="white"
-              onClick={() => this.runCode()}
-            />
+            <div style={{'textAlign' : 'center'}} >
+              <Button
+                className="run-btn"
+                text="Run Code"
+                backgroundColor="red"
+                color="white"
+                onClick={() => this.runCode()}
+              />
+              <Button
+                  className="run-btn"
+                  text="Submit Code"
+                  backgroundColor="red"
+                  color="white"
+                  onClick={() => this.submitCode()}
+              />
+            </div>
+            {this.state.loading ? <Loading /> : null}
+            {this.state.submitResult ? this.state.submitResult : null}
           </div>
           <div className="code2-editor-container">
             <CodeMirror 
