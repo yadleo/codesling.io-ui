@@ -15,15 +15,15 @@ class AddChallenge extends Component {
     fn: '',
     input: '',
     output: '',
-    testcode: [],
+    testcase: [],
    }
 
   submitChallenge = async (e) => {
     e.preventDefault();
-    if (this.state.testcode.length === 0) {
+    if (this.state.testcase.length === 0) {
       return alert('Please add tests cases before submit');
     }
-    const { title, content, difficulty, fn, testcode} = this.state;
+    const { title, content, difficulty, fn, testcase} = this.state;
     const id = localStorage.getItem('id');
     
     const body = {
@@ -36,9 +36,9 @@ class AddChallenge extends Component {
     }
     
     const result = await axios.post('http://localhost:3396/api/challenges/addChallenge', body);
-    this.state.testcode.forEach( async (test) => {
+    this.state.testcase.forEach( async (test) => {
       let tests = {
-        testcode: JSON.stringify(test),
+        testcase: JSON.stringify(test),
         challenge_id: result.data[0].id
       }
       console.log('----', tests);
@@ -49,15 +49,15 @@ class AddChallenge extends Component {
 
   addNewTestCase = (e) => {
     e.preventDefault();
-    let tempTestCode = this.state.testcode;
+    let tempTestCase = this.state.testcase;
     const { input, output } = this.state;
-    tempTestCode.push({
+    tempTestCase.push({
       input,
       output
     })
-    console.log(tempTestCode)
+    console.log(tempTestCase)
     this.setState({ 
-      testcode: tempTestCode,
+      testcase: tempTestCase,
       input: '',
       output: '',
     })
