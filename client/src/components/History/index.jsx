@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { HistoryList } from './HistoryList.jsx';
 import Logo from '../globals/Logo/';
+
 class History extends Component {
   state = { 
     history: []
