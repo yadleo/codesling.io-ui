@@ -46,7 +46,7 @@ class Sling extends Component {
     });
 
     socket.on('serverOne.changed', ({ text, player }) => {
-      this.setState({ ownerText: text });
+      // this.setState({ ownerText: text });
     });
 
     socket.on('serverTwo.changed', ({ text, player }) => {
@@ -79,7 +79,7 @@ class Sling extends Component {
           //History
           let outcome = player === this.props.player ? 1 : 0;
           let time = new Date();
-          let clout = 1;
+          let clout = this.state.challenge.difficulty;
           let user_id = parseInt(localStorage.getItem('id'));
           let challenger_id= 1;
           let challenge_id = this.state.challenge.id;
