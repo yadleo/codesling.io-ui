@@ -31,9 +31,10 @@ class Sling extends Component {
 
   componentDidMount() {
     const { socket, challenge, player } = this.props;
-    const startChall = typeof challenge === 'string' ? JSON.parse(challenge) : {}
+    const startChall = typeof challenge === 'string' ? JSON.parse(challenge) : {};
+    const playerObject = { id: localStorage.getItem('id'), username: localStorage.getItem('username')};
     socket.on('connect', () => {
-      socket.emit('client.ready', { challenge: startChall, player });
+      socket.emit('client.ready', { challenge: startChall, player: playerObject });
     });
     
     socket.on('server.initialState', ({ id, playerOneText, playerTwoText, challenge }) => {
@@ -46,7 +47,7 @@ class Sling extends Component {
     });
 
     socket.on('serverOne.changed', ({ text, player }) => {
-      // this.setState({ ownerText: text });
+      this.setState({ ownerText: text });
     });
 
     socket.on('serverTwo.changed', ({ text, player }) => {
