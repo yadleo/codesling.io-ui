@@ -30,11 +30,11 @@ class Sling extends Component {
 
 
   componentDidMount() {
-    const { socket, challenge, player } = this.props;
+    const { socket, challenge } = this.props;
     const startChall = typeof challenge === 'string' ? JSON.parse(challenge) : {};
-    const playerObject = { id: localStorage.getItem('id'), username: localStorage.getItem('username')};
+    const player = { id: parseInt(localStorage.getItem('id')), username: localStorage.getItem('username')};
     socket.on('connect', () => {
-      socket.emit('client.ready', { challenge: startChall, player: playerObject });
+      socket.emit('client.ready', { challenge: startChall, player });
     });
     
     socket.on('server.initialState', ({ id, playerOneText, playerTwoText, challenge }) => {
@@ -55,22 +55,22 @@ class Sling extends Component {
     });
 
     socket.on('server.run', ({ stdout, player }) => {
-      this.props.player === player ? this.setState({ stdout }) : null;
+      parseInt(localStorage.getItem('id')) === player.id ? this.setState({ stdout }) : null;
     });
 
-    socket.on('server.submit', ({ pass, player, expected, got }) => {
+    socket.on('server.submit', ({ pass, player, expected, got, opponent }) => {
       if(!this.state.blocked){
-        if(player === this.props.player){
+        if(player.id === parseInt(localStorage.getItem('id'))){
           this.setState({
             loading: false,
-            submitResult: (<SubmittedCode pass={pass} player={player} text={{ expected:expected , got:got }} />)
+            submitResult: (<SubmittedCode pass={pass} player={player.username} text={{ expected:expected , got:got }} />)
           });
         }
 
         if(pass){
-          if(player !== this.props.player){
+          if(player.id !== parseInt(localStorage.getItem('id'))){
             this.setState({
-              submitResult: (<SubmittedCode pass={pass} player={player} text={{ expected:expected , got:got }} />)
+              submitResult: (<SubmittedCode pass={pass} player={player.username} text={{ expected:expected , got:got }} />)
             });
           }
           //block game
@@ -78,11 +78,22 @@ class Sling extends Component {
             blocked: true
           });
           //History
-          let outcome = player === this.props.player ? 1 : 0;
+          console.log('player', player);
+          console.log('opponent', opponent);
+
+          if(player === undefined){
+            player = { id: 1, username: 'Guest' };
+          }
+
+          if(opponent === undefined){
+            opponent = { id: 1, username: 'Guest' };
+          }
+
+          let outcome = player.id === parseInt(localStorage.getItem('id')) ? 1 : 0;
           let time = new Date();
           let clout = this.state.challenge.difficulty;
-          let user_id = parseInt(localStorage.getItem('id'));
-          let challenger_id= 1;
+          let user_id = parseInt(localStorage.getItem('id')) === player.id ? player.id : opponent.id;
+          let challenger_id = parseInt(localStorage.getItem('id')) === player.id ? opponent.id : player.id;
           let challenge_id = this.state.challenge.id;
           console.log({ outcome , time , clout , user_id , challenger_id , challenge_id });
 
@@ -106,10 +117,11 @@ class Sling extends Component {
         loading: true,
         submitResult: undefined
       });
+      const playerObj = { id: parseInt(localStorage.getItem('id')), username: localStorage.getItem('username')};
       if (player === 1) {
-        socket.emit('client.submit', { text: ownerText, player });
+        socket.emit('client.submit', { text: ownerText, player: playerObj });
       } else {
-        socket.emit('client.submit', { text: challengerText, player });
+        socket.emit('client.submit', { text: challengerText, player: playerObj });
       }
     }
   }
@@ -117,10 +129,11 @@ class Sling extends Component {
   runCode = () => {
     const { socket, player } = this.props;
     const { ownerText, challengerText } = this.state;
+    const playerObj = { id: parseInt(localStorage.getItem('id')), username: localStorage.getItem('username')};
     if (player === 1) {
-      socket.emit('client.run', { text: ownerText, player });
+      socket.emit('client.run', { text: ownerText, player: playerObj });
     } else {
-      socket.emit('client.run', { text: challengerText, player });
+      socket.emit('client.run', { text: challengerText, player: playerObj });
     }
   }
 
