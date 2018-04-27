@@ -17,7 +17,10 @@ class Home extends Component {
 
    async componentDidMount() {
     const { data } = await axios.get(`http://localhost:3396/api/challenges`);
-    this.setState({ allChallenges: data });
+    this.setState({ 
+      allChallenges: data,
+      selectedChallenge: JSON.stringify(data[0])
+    });
    }
 
   randomSlingId = () => {
@@ -63,10 +66,10 @@ class Home extends Component {
         />
         <br />
         <select onChange={(e) => this.handleChallengeSelect(e)}>
-          {this.state.allChallenges.map(challenge => {
+          {this.state.allChallenges.map((challenge, key)=> {
             return (
             <option
-              key={challenge.id}
+              key={key}
               value={JSON.stringify(challenge)}
             >
               {challenge.title}
