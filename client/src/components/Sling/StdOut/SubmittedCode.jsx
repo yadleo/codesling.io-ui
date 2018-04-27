@@ -3,7 +3,7 @@ import React from 'react';
 const SubmittedCode = ({ text, pass, player }) => {
   if (pass){
     return (<div>
-      <h1>Player {player} Won!</h1>
+      <h1>Player {player ? player : 2} Won!</h1>
     </div>)
   } else {
     return (
