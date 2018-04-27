@@ -34,7 +34,7 @@ class AddChallenge extends Component {
     }
     
     const result = await axios.post('http://localhost:3396/api/challenges/addChallenge', body);
-    this.state.testcode.forEach( (test) => {
+    this.state.testcase.forEach( (test) => {
       let tests = {
         testcase: JSON.stringify(test),
         challenge_id: result.data[0].id
@@ -45,7 +45,7 @@ class AddChallenge extends Component {
     let userChallenge = {
       user_id: id,
       challenge_id: result.data[0].id,
-      type: difficulty
+      type: 0
     }
     axios.post('http://localhost:3396/api/usersChallenges', userChallenge);
     this.props.history.push('/home');
@@ -59,7 +59,7 @@ class AddChallenge extends Component {
       input,
       output
     })
-    console.log(tempTestCase)
+    
     this.setState({ 
       testcase: tempTestCase,
       input: '',

@@ -4,6 +4,8 @@ import axios from 'axios';
 
 import AddChallenge from './AddChallenge/index.jsx';
 import Button from '../globals/Button/';
+import Logo from '../globals/Logo';
+import './Challenge.css';
 
 class Challenge extends Component {
   state = {
@@ -18,22 +20,14 @@ class Challenge extends Component {
 
   fetchAllChallenges = async () => {
     const id = localStorage.getItem('id');
+    
     const { data } = await axios.get(`http://localhost:3396/api/challenges`);
-    const usersData = await axios.get(`http://localhost:3396/api/usersChallenges/${id}`);
-    let tempMyChallenges = [];
-
-    for (let i=0; i<usersData.data.length; i++) {
-      for (let x=0; x<data.length; x++) {
-        if (data[x]['id'] === usersData['data'][i]['challenge_id']) {
-          tempMyChallenges.push(data[x]);
-        }
-      }
-    }
-    // await axios.get(`http://localhost:3396/api/challenges/${data.challenge_id}`);
+    const myChallenges = await axios.get(`http://localhost:3396/api/usersChallenges/${id}`);
+    
     this.setState({ 
-      challenges: tempMyChallenges,
+      challenges: myChallenges.data,
       allChallenges: data,
-      myChallenges: tempMyChallenges
+      myChallenges: myChallenges.data
     });
   }
 
@@ -50,6 +44,7 @@ class Challenge extends Component {
   render() {
     return (
       <div>
+        <div className="landing-page-container"><Logo className="landing-page-logo"/></div>
         <table align="center">
           <tbody>
             <tr>
@@ -73,6 +68,7 @@ class Challenge extends Component {
             </tr>
           </tbody>
         </table>
+        <br/>
         {this.state.challenges.map( (challenge, key) => {
           return (
             <div key={key}>
@@ -82,6 +78,7 @@ class Challenge extends Component {
             </div>
           )
         })}
+        <br/>
         <div style={{'textAlign':'center'}}>
           <Button
             backgroundColor='red'
