@@ -4,7 +4,6 @@ node_js: "9"
 before_script:
   - yarn
   - yarn buildEnv
-  - yarn build
   - yarn setup
   - yarn start:server &
   - sleep 10
