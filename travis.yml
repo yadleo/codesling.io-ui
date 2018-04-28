@@ -1,0 +1,38 @@
+language: node_js
+node_js: "9"
+
+before_script:
+  - yarn
+  - yarn buildEnv
+  - yarn build
+  - yarn setup
+  - yarn start:server &
+  - sleep 10
+
+script:
+  - find -type d -name "*node_modules*" -prune -o -type f -print | zip latest_ui.zip -@
+  - mkdir -p dpl_cd_upload
+  - mv latest_ui.zip dpl_cd_upload/latest_ui.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: dpl_cd_upload
+    skip_cleanup: true
+    on: &2
+      repo: yadleo/codesling.io-ui
+      branch: travis
+    bucket: hrla21legacy
+    region: us-west-1
+  
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: hrla21legacy
+    key: latest_ui.zip
+    bundle_type: zip
+    application: legacy
+    deployment_group: hrla21
+    region: us-west-1
+    on: *2
